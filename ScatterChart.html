@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html ng-app="myApp">
+<head>
+	<title>Scatter Chart</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.2/angular.js"></script>
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+    <script src="script.js"></script>
+    <style type="text/css">
+        .axis path, .axis line
+        {
+            fill: none;
+            stroke: #777;
+            shape-rendering: crispEdges;
+        }
+        
+        .axis text
+        {
+            font-family: 'Arial';
+            font-size: 13px;
+        }
+        .tick
+        {
+            stroke-dasharray: 1, 2;
+        }
+        
+    </style>
+</head>
+<body ng-controller="sctterController" style="background-color:lightgrey">
+	<div style="width: 800px; height: 500px;background-color:white;">
+		<scatterchart data="dataset" config="config"></scatterchart>
+	</div>
+</body>
+</html>
