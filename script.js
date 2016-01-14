@@ -1,10 +1,7 @@
-angular.module("myApp", [])
+  angular.module("myApp", [])
 
 .controller("sctterController", ['$scope', function($scope){
-	var ALIAS = {
-		x: "month",
-		y: "sales"
-	}
+
 	$scope.dataset = [
 		{"month": 10, "sales": 100, "color": "red"},
 		{"month": 20, "sales": 130, "color": "blue"},
@@ -22,14 +19,8 @@ angular.module("myApp", [])
 			"r": "5",
 			"fill": "red"
 		},
-		ticks: {
-			"x": null,
-			"y": null
-		},
-		tickSize: {
-			"x": 5,
-			"y": 5
-		},
+		ticks: "10, 10",
+		tickSize: "5, 5",
 		regressionLine: {
 			"enabled": true,
 			"x1": 20,
@@ -38,11 +29,7 @@ angular.module("myApp", [])
 			"y2": 120,
 			"stroke": "black",
 			"stroke-width": 2
-		},
-		tooltip: {
-			enabled: true,
 		}
-		
 	}
 }])
 
@@ -54,6 +41,11 @@ angular.module("myApp", [])
 			config: '='
 		},
 		link: function(scope, element, attrs) {
+
+			var ALIAS = {
+				x: "month",
+				y: "sales"
+			}
 
 			//Getting parent node and its properties
 			var parent = d3.select(element.parent()[0]),
@@ -67,53 +59,42 @@ angular.module("myApp", [])
 				  right: 20,
 				  bottom: 50,
 				  left: 50
-			},
+			};
 		    
-		    xRange = d3.scale.linear().range([MARGINS.left, WIDTH - MARGINS.right]).domain([d3.min(scope.data, function (d) {
+		    var config = scope.config, minValue = getXY(config.minValue), maxValue = getXY(config.maxValue),
+
+		    xRange = d3.scale.linear().range([MARGINS.left, WIDTH - MARGINS.right]).domain([minValue.x || d3.min(scope.data, function (d) {
 		        return d[ALIAS.x];
 		      }),
-		      d3.max(scope.data, function (d) {
+		      maxValue.x || d3.max(scope.data, function (d) {
 		        return d[ALIAS.x];
 		      })
 		    ]),
 
-		    yRange = d3.scale.linear().range([HEIGHT - MARGINS.bottom, MARGINS.top]).domain([d3.min(scope.data, function (d) {
+		    yRange = d3.scale.linear().range([HEIGHT - MARGINS.bottom, MARGINS.top]).domain([minValue.y || d3.min(scope.data, function (d) {
 		        return d[ALIAS.y];
 		      }),
-		      d3.max(scope.data, function (d) {
+		      maxValue.y || d3.max(scope.data, function (d) {
 		        return d[ALIAS.y];
 		      })
-		    ]),
+		    ]);
 
-		    ticks = scope.config.ticks, xTicks = ticks.x, yTicks = ticks.y,
+			var ticks = config.ticks,
 
-		    tickSize = scope.config.tickSize, xTickSize = tickSize.x, yTickSize = tickSize.y,
+		    tickSize = config.tickSize, xTickSize = tickSize.x, yTickSize = tickSize.y,
 
-		    tooltip = scope.config.tooltip;
-
-		    if(typeof(xTicks)!=="number" || xTicks <= 0) {
-				xTicks = null;
-			}
-			if(typeof(yTicks)!=="number" || yTicks <= 0) {
-				yTicks = null;
-			}
-			if(typeof(xTickSize)!=="number") {
-				xTickSize = null;
-			}
-			if(typeof(yTickSize)!=="number") {
-				yTickSize = null;
-			}
+		    tooltip = config.tooltip;
 
 			var xAxis = d3.svg.axis()
 		      .scale(xRange)
-		      .ticks(xTicks)
-		      .tickSize(xTickSize)
+		      .ticks(getXY(config.ticks).x)
+		      .tickSize(getXY(config.tickSize).x)
 		      .tickSubdivide(true),
 
 		    yAxis = d3.svg.axis()
 		      .scale(yRange)
-		      .ticks(yTicks)
-		      .tickSize(yTickSize)
+		      .ticks(getXY(config.ticks).y)
+		      .tickSize(getXY(config.tickSize).y)
 		      .orient("left")
 		      .tickSubdivide(true);
 
@@ -138,9 +119,9 @@ angular.module("myApp", [])
 				.call(yAxis);
 
 			//CHECKING for given attributes
-			var shape = scope.config.plot, radius = 5, fill = "black",
+			var shape = config.plot, radius = 5, fill = "black",
 
-			regressionLine = scope.config.regressionLine;
+			regressionLine = config.regressionLine;
 
 			function getD3CompatibleObj(oldObj){
 				var newObj = {};
@@ -185,7 +166,19 @@ angular.module("myApp", [])
 
 				//.text('<div style="border:1px solid black">Hi</div>');//function(d){return (d[ALIAS.x] +", "+d[ALIAS.y]);}
 
-			
+			function getXY(str) {
+				if(str) {
+					var index = str.split(","),
+					x = index[0];
+					return {
+						'x': x.trim(),
+						'y': (index[1] || x).trim()
+					};
+				}
+				else {
+					return {};
+				}
+			}
 		}
 	};
 })
