@@ -30,7 +30,7 @@
 			"stroke": "black",
 			"stroke-width": 2
 		},
-		invert: true
+		invert: false
 	}
 }])
 
