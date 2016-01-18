@@ -29,7 +29,8 @@
 			"y2": 120,
 			"stroke": "black",
 			"stroke-width": 2
-		}
+		},
+		invert: true
 	}
 }])
 
@@ -61,9 +62,21 @@
 				  left: 50
 			};
 		    
-		    var config = scope.config, minValue = getXY(config.minValue), maxValue = getXY(config.maxValue),
+		    var config = scope.config, minValue = getXY(config.minValue), maxValue = getXY(config.maxValue);
+		    if(config.invert) {
+				var temp = ALIAS.x;
+				ALIAS.x = ALIAS.y;
+				ALIAS.y = temp;
 
-		    xRange = d3.scale.linear().range([MARGINS.left, WIDTH - MARGINS.right]).domain([minValue.x || d3.min(scope.data, function (d) {
+				temp = config.regressionLine.x1;
+				config.regressionLine.x1 = config.regressionLine.y1;
+				config.regressionLine.y1 = temp;
+
+				temp = config.regressionLine.x2;
+				config.regressionLine.x2 = config.regressionLine.y2;
+				config.regressionLine.y2 = temp;
+			}
+		    var xRange = d3.scale.linear().range([MARGINS.left, WIDTH - MARGINS.right]).domain([minValue.x || d3.min(scope.data, function (d) {
 		        return d[ALIAS.x];
 		      }),
 		      maxValue.x || d3.max(scope.data, function (d) {

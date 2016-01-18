@@ -1,0 +1,13 @@
+[
+	{"month": 10, "sales": 100, "color": "red"},
+	{"month": 20, "sales": 130, "color": "blue"},
+	{"month": 30, "sales": 250, "color": "red"},
+	{"month": 40, "sales": 300, "color": "blue"},
+	{"month": 50, "sales": 265, "color": "red"},
+	{"month": -20, "sales": 225, "color": "blue"},
+	{"month": 70, "sales": 180, "color": "red"},
+	{"month": 80, "sales": 120, "color": "blue"},
+	{"month": 90, "sales": 145, "color": "red"},
+	{"month": 100, "sales": 130, "color": "blue"}
+]
+}
