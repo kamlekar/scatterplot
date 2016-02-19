@@ -3,26 +3,33 @@
 .controller("sctterController", ['$scope', function($scope){
 
 	$scope.dataset = [
-		{"month": 10, "sales": 100, "color": "red"},
-		{"month": 20, "sales": 130, "color": "blue"},
-		{"month": 30, "sales": 250, "color": "red"},
-		{"month": 40, "sales": 300, "color": "blue"},
-		{"month": 50, "sales": 265, "color": "red"},
-		{"month": -20, "sales": 225, "color": "blue"},
-		{"month": 70, "sales": 180, "color": "red"},
-		{"month": 80, "sales": 120, "color": "blue"},
-		{"month": 90, "sales": 145, "color": "red"},
-		{"month": 100, "sales": 130, "color": "blue"}];
+        { x: 95, y: 95, z: 13.8 },
+        { x: 86.5, y: 102.9, z: 14.7 },
+        { x: 80.8, y: 91.5, z: 15.8 },
+        { x: 80.4, y: 102.5, z: 12},
+        { x: 80.3, y: 86.1, z: 11.8 },
+        { x: 78.4, y: 70.1, z: 16.6 },
+        { x: 74.2, y: 68.5, z: 14.5 },
+        { x: 73.5, y: 83.1, z: 10 },
+        { x: 71, y: 93.2, z: 24.7 },
+        { x: 69.2, y: 57.6, z: 10.4 },
+        { x: 68.6, y: 20, z: 16 },
+        { x: 65.5, y: 126.4, z: 35.3 },
+        { x: 65.4, y: 50.8, z: 28.5 },
+        { x: 63.4, y: 51.8, z: 15.4 },
+        { x: 64, y: 82.9, z: 31.3 }
+	];
 
 	$scope.config = {
 		plot: {
-			"r": "5",
+			"type": "BubbleChart", //Options: ScatterChart/BubbleChart
+			"r": 5,
 			"fill": "red"
 		},
 		ticks: "10, 10",
 		tickSize: "5, 5",
 		regressionLine: {
-			"enabled": true,
+			"enabled": false, //Options: true/false
 			"x1": 20,
 			"y1": 300,
 			"x2": 100,
@@ -44,26 +51,14 @@
 		link: function(scope, element, attrs) {
 
 			var ALIAS = {
-				x: "month",
-				y: "sales"
+				x: "x",
+				y: "y"
 			}
 
 			//Getting parent node and its properties
-			var parent = d3.select(element.parent()[0]),
+			var config = scope.config;
 
-				HEIGHT = parent[0][0].clientHeight,
-				
-				WIDTH = parent[0][0].clientWidth,
-
-		    MARGINS = {
-				  top: 20,
-				  right: 20,
-				  bottom: 50,
-				  left: 50
-			};
-		    
-		    var config = scope.config, minValue = getXY(config.minValue), maxValue = getXY(config.maxValue);
-		    if(config.invert) {
+			if(config.invert === true) {
 				var temp = ALIAS.x;
 				ALIAS.x = ALIAS.y;
 				ALIAS.y = temp;
@@ -76,7 +71,23 @@
 				config.regressionLine.x2 = config.regressionLine.y2;
 				config.regressionLine.y2 = temp;
 			}
-		    var xRange = d3.scale.linear().range([MARGINS.left, WIDTH - MARGINS.right]).domain([minValue.x || d3.min(scope.data, function (d) {
+
+			var parent = d3.select(element.parent()[0]),
+
+				HEIGHT = parent[0][0].clientHeight,
+				
+				WIDTH = parent[0][0].clientWidth,
+
+		    MARGINS = {
+				  top: 20,
+				  right: 20,
+				  bottom: 50,
+				  left: 50
+			},
+
+			minValue = getXY(config.minValue), maxValue = getXY(config.maxValue),
+
+		    xRange = d3.scale.linear().range([MARGINS.left, WIDTH - MARGINS.right]).domain([minValue.x || d3.min(scope.data, function (d) {
 		        return d[ALIAS.x];
 		      }),
 		      maxValue.x || d3.max(scope.data, function (d) {
@@ -158,10 +169,6 @@
 					.attr(getD3CompatibleObj(regressionLine));
 			};
 
-			
-			if(shape.r) {
-				radius = shape.r;
-			}
 			if(shape.fill) {
 				fill = shape.fill;
 			}
@@ -172,12 +179,20 @@
 				.append("circle")
 				.attr("cx", function(d){return xRange(d[ALIAS.x]);})
 				.attr("cy", function(d){return yRange(d[ALIAS.y]);})
-				.attr("r", radius)
-				.style("fill", function(d){return (d.color);})
+				//.attr("r", radius)
+				.style("fill", fill)
 				.append("svg:title")
 				.text(function(d){return (d[ALIAS.x]+" , "+d[ALIAS.y]);})
 
 				//.text('<div style="border:1px solid black">Hi</div>');//function(d){return (d[ALIAS.x] +", "+d[ALIAS.y]);}
+
+
+			if(shape.type == "BubbleChart") {
+				svg.selectAll("circle").attr("r", function(d){return d.z;});
+			}
+			if(shape.type == "ScatterChart") {
+				svg.selectAll("circle").attr("r", radius);
+			}
 
 			function getXY(str) {
 				if(str) {
@@ -195,5 +210,3 @@
 		}
 	};
 })
-
-
