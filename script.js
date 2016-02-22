@@ -4,7 +4,7 @@
     $scope.dataset = [
     	{	
     		name: 'Female',
-            color: 'rgba(223, 83, 83, .5)',
+            color: 'red',
             data: [
 		        { x: -10.3, y: 86.1, z: 11.8 },
 		        { x: 78.4, y: 70.1, z: 16.6 },
@@ -33,7 +33,7 @@
 	    },
 	    {	
     		name: 'Male',
-            color: 'rgba(3, 83, 83, .5)',
+            color: 'green',
             data: [
 		        { x: 95, y: 95, z: 13.8 },
 		        { x: 86.5, y: 102.9, z: 14.7 },
@@ -175,7 +175,7 @@
 			var minValue = getXY(config.minValue), maxValue = getXY(config.maxValue);
 
 			// Merging arrays to fetch the minimum and max values on scale
-			var fullData = scope.data[0].data;
+			var fullData = angular.copy(scope.data[0].data);
 			for(var k = 1, iLen = scope.data.length; k < iLen; k ++){
 				for(var j = 0, jLen = scope.data[k].data.length; j < jLen; j++) {
 					var d = scope.data[k].data[j];
